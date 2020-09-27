@@ -10,6 +10,8 @@ street:
 homeNumber: 
 aptNumber: '1'
 phoneNumber: 
-creditCard: '3293059327394042'
-ccv: '704'
-taz: '4536345635'
+creditCard: ''
+ccv: ''
+expiryYear: '6' #2019 is option1, going up. = year - 2018
+expiryMonth: '2' 
+taz: ''
