@@ -16,7 +16,6 @@ with open('creds.yaml',encoding="utf8") as file:
     productUrl=(data['productUrl'])
     chromeDriverPath=(data['chromeDriverPath'])
 
-productUrl="https://www.kravitz.co.il/"+productUrl
 print (productUrl)
 
 def telegramNotify(msg):
