@@ -28,15 +28,6 @@ def telegramNotify(msg):
    return True
 # telegramNotify(telegramToken, telegramIdToNotify, 'reeeee')
 
-def find_all_iframes(driver):
-   iframes = driver.find_elements_by_xpath("//iframe")
-   for index, iframe in enumerate(iframes):
-      driver.switch_to.frame(index)
-      try:
-         driver.find_element_by_xpath('//*[@id="id_number_input"]').send_keys(data['taz'])
-         time.sleep(300)
-      except:
-         print("fail")
 def waitAndClick(element):
    time.sleep(5)
    for x in range(150):
@@ -74,11 +65,13 @@ while True: #todo: move everything to try
 
    #payment
    waitAndClick('html/body/div[2]/main/div/div/div[2]/div[2]/div[4]/ol/li[2]/div/div[3]/form/div[3]/div/button')
-   time.sleep(10)
-   
-   driver.switch_to_frame(0)
+   time.sleep(15)
+   driver.switch_to.frame(0)
    print("switched frames!!!")
    driver.find_element_by_xpath('//*[@id="id_number_input"]').send_keys(data['taz'])
+   driver.find_element_by_xpath('//*[@id="credit_card_number_input"]').send_keys(data['creditCard'])
+   driver.find_element_by_xpath('//*[@id="cvv_input"]').send_keys(data['ccv'])
+   driver.find_element_by_xpath('//*[@id="submitBtn"]').click()
    # waitAndClick('//*[@id="id_number_input"]')
    # driver.find_element_by_xpath('/html/body/div[1]/div[4]/div/div/div[1]/div[1]/div/div/input').send_keys(data['creditCard'])
    # driver.find_element_by_xpath('/html/body/div[1]/div[4]/div/div/div[2]/div[2]/div/div/input').send_keys(data['ccv'])
