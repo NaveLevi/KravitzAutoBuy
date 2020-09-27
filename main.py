@@ -8,10 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-
-
 with open('creds.yaml',encoding="utf8") as file:
-
     data = yaml.load(file, Loader=yaml.SafeLoader)
     productUrl=(data['productUrl'])
     chromeDriverPath=(data['chromeDriverPath'])
@@ -24,12 +21,10 @@ def telegramNotify(msg):
    msgUrl = "https://api.telegram.org/bot"+token+"/sendMessage?chat_id="+userId+"&text="+msg
    requests.get(msgUrl)
    print(msgUrl)
-#    https://api.telegram.org/bot1080960104:AAGZXaVIX--d5xR7D3d_hqXuA4OED_9Iz_0/sendMessage?chat_id=47976441&text=reeee
    return True
-# telegramNotify(telegramToken, telegramIdToNotify, 'reeeee')
 
-def waitAndClick(element):
-   time.sleep(5)
+def waitAndClick(element, sleep=0):
+   time.sleep(sleep)
    for x in range(150):
       print(x)
       try:
@@ -37,7 +32,7 @@ def waitAndClick(element):
       except:
          time.sleep (0.1)
          continue
-      print("clicking clickme!")
+      print("clicking! "+element )
       return True
    return False
 
@@ -46,7 +41,7 @@ while True: #todo: move everything to try
    driver = webdriver.Chrome(chromeDriverPath)
    driver.get(productUrl)
 
-   waitAndClick('//*[@id="product-addtocart-button"]')
+   waitAndClick('//*[@id="product-addtocart-button"]', 5)
    telegramNotify("I've added a product to the cart!")
    driver.get("https://www.kravitz.co.il/edea/cart/")
    #todo: add check that cart has 1 item
@@ -68,28 +63,14 @@ while True: #todo: move everything to try
    time.sleep(15)
    driver.switch_to.frame(0)
    print("switched frames!!!")
+   waitAndClick('//*[@id="date_month_input"]/option[{}]'.format(data['expiryMonth']))
+   waitAndClick('//*[@id="date_year_input"]/option[{}]'.format(data['expiryYear'])) #2019 is option1, going up. = year - 2018
    driver.find_element_by_xpath('//*[@id="id_number_input"]').send_keys(data['taz'])
    driver.find_element_by_xpath('//*[@id="credit_card_number_input"]').send_keys(data['creditCard'])
    driver.find_element_by_xpath('//*[@id="cvv_input"]').send_keys(data['ccv'])
    driver.find_element_by_xpath('//*[@id="submitBtn"]').click()
-   # waitAndClick('//*[@id="id_number_input"]')
-   # driver.find_element_by_xpath('/html/body/div[1]/div[4]/div/div/div[1]/div[1]/div/div/input').send_keys(data['creditCard'])
-   # driver.find_element_by_xpath('/html/body/div[1]/div[4]/div/div/div[2]/div[2]/div/div/input').send_keys(data['ccv'])
-   # <input autocomplete="off" class="required form-control" id="id_number_input" inputmode="text" maxlength="9" name="CreditCardHoldIder" type="text" value="">
-   # waitAndClick('//*[@id="id_number_input"]')
-   # WebDriverWait(driver, 20).until(EC.frame_to_be_available_and_switch_to_it((By.XPATH,'//*[@id="credit_card_number_input"]')))
-   # WebDriverWait(driver, 20).until(EC.element_to_be_clickable((By.XPATH, "//input[@class='number' and @id='credit-card-number']"))).send_keys("1234567890987654")
 
-   time.sleep(5)
-   # find_all_iframes(driver)
-   # iframes = driver.find_elements_by_xpath("//iframe")
-   # print(iframes)
-   # driver.switch_to.frame(iframes[0])
-   
 
-   time.sleep(20)
-
-   
 
    time.sleep(100)
    exit()
