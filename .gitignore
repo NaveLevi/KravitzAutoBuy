@@ -2,3 +2,5 @@ creds.yaml
 geckodriver.log
 .vscode
 debug.log
+screenshot-*
+status.txt

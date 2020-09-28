@@ -42,23 +42,40 @@ def waitAndClick(element,driver, sleep=0):
 
 
 
-def sendImage(img,userId,token):
-    url = "https://api.telegram.org/bot"+token+"/sendPhoto"
-    files = {'photo': open(img , 'rb')}
-    data = {'chat_id' : userId}
-    r= requests.post(url, files=files, data=data)
-    print('Image sent')
+def screenshotAndSend():
+   currentTime = time.strftime("%H.%M.%S", time.localtime())
+   imgPath = 'screenshot-'+currentTime+".png"
+   driver.save_screenshot(imgPath)
+   print('Taking screenshot')
+
+   url = "https://api.telegram.org/bot"+data['telegramToken']+"/sendPhoto"
+   files = {'photo': open(imgPath , 'rb')}
+   dataToSend = {'chat_id' : data['telegramIdToNotify']}
+   requests.post(url, files=files, data=dataToSend)
+   print('Image sent')
+
 
 def Main(driver):
    driver.get(productUrl)
    waitAndClick('//*[@id="product-addtocart-button"]', driver, 5)
    telegramNotify("I've added a product to the cart!")
    driver.get("https://www.kravitz.co.il/edea/cart/")
-   #todo: add check that cart has 1 item
-   # time.sleep(5)
-   # print("trying to get text from box")
-   # text = driver.find_element_by_xpath('/html/body/div[3]/main/div/div[2]/div/div[2]/div[2]/div/div/div/div[2]/div/div[2]/div[4]/div/div/input').getText("my text")
-   # print("The text I got is:{}".format(text))
+   time.sleep(10)
+   #checking if the price is right
+   print("trying chartSum")
+   #todo: dinamically wait for the element to load and remove sleep from above (order sum box)
+   chartSum = driver.find_element_by_xpath('/html/body/div[2]/main/div/div[2]/div/div[2]/div[1]/div[2]/div[1]/div[1]/div/div/div[4]/div[2]/strong/span').text
+   chartSum = ''.join(filter(str.isdigit, chartSum))[:-2]
+   print("The chart sum is:{}, vailidating that it's the expected price".format(chartSum))
+   if chartSum == data['expectedPrice']:
+      print("Expected price of {} was matched! continueing".format(data['expectedPrice']))
+      telegramNotify("Expected price of {} was matched! continueing".format(data['expectedPrice']))
+   else:
+      print("Expected price was not matched. expected:{}, actual price:{}".format(data['expectedPrice'], chartSum))
+      telegramNotify("Expected price was not matched. expected:{}, actual price:{}".format(data['expectedPrice'], chartSum))
+      screenshotAndSend()
+      exit(1)
+   
 
    waitAndClick('//*[@id="cart-summary"]/div[1]/ul/li/button', driver)
    time.sleep(5)
@@ -70,7 +87,6 @@ def Main(driver):
    driver.find_element_by_xpath('/html/body/div[2]/main/div/div/div[2]/div[2]/div[4]/ol/li[1]/div[2]/form[2]/div/fieldset/div/div[2]/div/input').send_keys(data['homeNumber'])
    driver.find_element_by_xpath('/html/body/div[2]/main/div/div/div[2]/div[2]/div[4]/ol/li[1]/div[2]/form[2]/div/fieldset/div/div[3]/div/input').send_keys(data['aptNumber'])
    driver.find_element_by_xpath('/html/body/div[2]/main/div/div/div[2]/div[2]/div[4]/ol/li[1]/div[2]/form[2]/div/div[7]/div/input').send_keys(data['phoneNumber'])
-   # driver.find_elements_by_xpath
 
    #payment
    waitAndClick('html/body/div[2]/main/div/div/div[2]/div[2]/div[4]/ol/li[2]/div/div[3]/form/div[3]/div/button', driver)
@@ -86,24 +102,21 @@ def Main(driver):
    
    with open('status.txt', 'w') as statusFile:
       statusFile.write('done')
-   currentTime = time.strftime("%H.%M.%S", time.localtime())
-   imgPath = currentTime+".png"
+   telegramNotify("Congratz! you got the product and will most likely get a picture of the purchase in 15 seconds")
    time.sleep(15) # sleep in order to acount for purchesing time before screenshot
-   driver.save_screenshot(imgPath)
-   print('Taking screenshot')
-   sendImage(imgPath,data['telegramIdToNotify'],data['telegramToken'])
+   screenshotAndSend()
    return True    
 
 
 #----------------------------------------------- MAIN
 tryCounter=1
-# driver = webdriver.Chrome(chromeDriverPath)
 while True:
    print("Trying to run the script for  the {}nd time".format(tryCounter))
    with open('status.txt') as f:
       statusLine = f.readline()
    if statusLine != 'done':
       try:
+         #todo: we might want to open in the background every time
          driver = webdriver.Chrome(chromeDriverPath)
          Main(driver)
          print("Done! Hopefully you got the product you wanted")
