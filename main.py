@@ -79,8 +79,7 @@ while True: #todo: move everything to try
    driver.find_element_by_xpath('//*[@id="submitBtn"]').click()
 
    time.sleep(15) # sleep in order to acount for purchesing time before screenshot 
-   t = time.localtime()
-   currentTime = time.strftime("%H.%M.%S", t)
+   currentTime = time.strftime("%H.%M.%S", time.localtime())
    imgPath = currentTime+".png"
    driver.save_screenshot(imgPath)
    print('Taking screenshot')
