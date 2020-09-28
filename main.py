@@ -36,6 +36,14 @@ def waitAndClick(element, sleep=0):
       return True
    return False
 
+
+def sendImage(img,userId,token):
+    url = "https://api.telegram.org/bot"+token+"/sendPhoto"
+    files = {'photo': open(img , 'rb')}
+    data = {'chat_id' : userId}
+    r= requests.post(url, files=files, data=data)
+    print('Imeg sent')
+
 #----------------------------------------------- MAIN
 while True: #todo: move everything to try
    driver = webdriver.Chrome(chromeDriverPath)
@@ -70,7 +78,14 @@ while True: #todo: move everything to try
    driver.find_element_by_xpath('//*[@id="cvv_input"]').send_keys(data['ccv'])
    driver.find_element_by_xpath('//*[@id="submitBtn"]').click()
 
+   time.sleep(15) # sleep in order to acount for purchesing time before screenshot 
+   t = time.localtime()
+   currentTime = time.strftime("%H.%M.%S", t)
+   imgPath = currentTime+".png"
+   driver.save_screenshot(imgPath)
+   print('Taking screenshot')
 
-
+   sendImage(imgPath,data['telegramIdToNotify'],data['telegramToken'])
    time.sleep(100)
    exit()
+   
