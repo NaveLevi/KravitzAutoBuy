@@ -2,7 +2,7 @@ telegramToken: "fdhfdgh"
 telegramIdToNotify: "47976441"
 productUrl: 'https://www.kravitz.co.il/10032945-%D7%A7%D7%95%D7%A0%D7%A1%D7%95%D7%9C%D7%AA-xbox-series-x'
 # productUrl: https://www.kravitz.co.il/10032969-%D7%A7%D7%95%D7%A0%D7%A1%D7%95%D7%9C%D7%94-sony-ps5-digital-edition
-expectedPrice: 1999
+expectedPrice: '1999'
 chromeDriverPath: C:\Program Files (x86)\chromedriver.exe
 email: 
 name: 
